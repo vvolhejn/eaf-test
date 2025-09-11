@@ -2,7 +2,6 @@ import argparse
 
 import cv2
 import numpy as np
-from scipy.ndimage import distance_transform_edt
 
 
 def get_center_of_mass(mask: np.ndarray) -> tuple[int, int]:
@@ -120,6 +119,7 @@ def dion_stretch(source: np.ndarray, target: np.ndarray) -> np.ndarray:
     """Apply Dion's stretch algorithm to warp the source image to match the target image."""
     source_mapping = PolarMapping(source)
 
+    # For debugging: visualize source contour
     # return source_mapping.contour()
 
     target_mapping = PolarMapping(target)
@@ -145,6 +145,9 @@ def dion_stretch(source: np.ndarray, target: np.ndarray) -> np.ndarray:
             sx, sy = int(source_point[0]), int(source_point[1])
             if 0 <= sx < source.shape[1] and 0 <= sy < source.shape[0]:
                 output[y, x] = source[sy, sx]
+
+    # Apply alpha mask of target to output
+    output[:, :, 3] = target[:, :, 3]
 
     return output
 
